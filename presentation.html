@@ -772,97 +772,296 @@
     </div>
 
     <script>
+        // Data Store
+        let reportData = {
+            revenue: "15.4", profit: "1.9", margin: "42", orders: "12.4K", ebitda: "2.8", nps: "72",
+            q1: 7.4, q2: 12.1, q3: 15.4, q4: 18.0
+        };
+
+        function updateUI() {
+            // Update individual values in the UI
+            document.querySelectorAll('.metric-value').forEach(el => {
+                const label = el.nextElementSibling.textContent.toLowerCase();
+                if (label === 'revenue') el.textContent = `₹${reportData.revenue}Cr`;
+                if (label === 'net profit') el.textContent = `₹${reportData.profit}Cr`;
+                if (label === 'gross margin') el.textContent = `${reportData.margin}%`;
+                if (label === 'orders') el.textContent = reportData.orders;
+                if (label === 'ebitda') el.textContent = `₹${reportData.ebitda}Cr`;
+                if (label === 'nps score') el.textContent = reportData.nps;
+            });
+            // Update charts
+            renderCharts();
+        }
+
         // 3D Tunnel
         const canvas = document.getElementById('tunnel');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-        renderer.setSize(innerWidth, innerHeight);
+        renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setClearColor(0x0a1628, 1);
         camera.position.z = 5;
 
-        // Tunnel lines
-        for (let i = 0; i < 8; i++) {
-            const pts = [];
-            const angle = (i / 8) * Math.PI * 2;
-            for (let j = 0; j <= 100; j++) {
-                const t = j / 100;
-                pts.push(new THREE.Vector3(
-                    Math.cos(angle) * 6 + Math.sin(t * Math.PI * 3) * 1.5,
-                    Math.sin(angle) * 6 + Math.cos(t * Math.PI * 2) * 1,
-                    -t * 150
-                ));
-            }
-            const geo = new THREE.BufferGeometry().setFromPoints(pts);
-            const mat = new THREE.LineBasicMaterial({ color: 0x4db8d9, transparent: true, opacity: 0.2 });
-            scene.add(new THREE.Line(geo, mat));
-        }
+        const tunnelGroup = new THREE.Group();
+        scene.add(tunnelGroup);
 
-        // Particles
+        // More immersive tunnel
+        const createTunnel = () => {
+            while (tunnelGroup.children.length > 0) tunnelGroup.remove(tunnelGroup.children[0]);
+            for (let i = 0; i < 12; i++) {
+                const pts = [];
+                const angle = (i / 12) * Math.PI * 2;
+                for (let j = 0; j <= 100; j++) {
+                    const t = j / 100;
+                    pts.push(new THREE.Vector3(
+                        Math.cos(angle) * 7 + Math.sin(t * Math.PI * 4) * 2,
+                        Math.sin(angle) * 7 + Math.cos(t * Math.PI * 3) * 1.5,
+                        -t * 200
+                    ));
+                }
+                const geo = new THREE.BufferGeometry().setFromPoints(pts);
+                const mat = new THREE.LineBasicMaterial({
+                    color: 0x4db8d9,
+                    transparent: true,
+                    opacity: 0.15 + (Math.random() * 0.1)
+                });
+                tunnelGroup.add(new THREE.Line(geo, mat));
+            }
+        };
+        createTunnel();
+
+        // Starfield
         const pGeo = new THREE.BufferGeometry();
-        const pPos = new Float32Array(300 * 3);
-        for (let i = 0; i < 300; i++) {
-            pPos[i * 3] = (Math.random() - 0.5) * 40;
-            pPos[i * 3 + 1] = (Math.random() - 0.5) * 25;
-            pPos[i * 3 + 2] = -Math.random() * 150;
+        const pPos = new Float32Array(500 * 3);
+        const pColors = new Float32Array(500 * 3);
+        for (let i = 0; i < 500; i++) {
+            pPos[i * 3] = (Math.random() - 0.5) * 60;
+            pPos[i * 3 + 1] = (Math.random() - 0.5) * 40;
+            pPos[i * 3 + 2] = -Math.random() * 200;
+            pColors[i * 3] = 0.3; pColors[i * 3 + 1] = 0.7; pColors[i * 3 + 2] = 0.85;
         }
         pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-        scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0x4db8d9, size: 0.12, transparent: true, opacity: 0.5 })));
+        pGeo.setAttribute('color', new THREE.BufferAttribute(pColors, 3));
+        const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
+            size: 0.15, transparent: true, opacity: 0.6, vertexColors: true
+        }));
+        scene.add(particles);
 
         let scrollY = 0;
+        let mouseX = 0, mouseY = 0;
+
         function animate() {
             requestAnimationFrame(animate);
-            camera.position.z = 5 - scrollY * 100;
-            camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
-            camera.position.y += (-mouseY * 1.5 - camera.position.y) * 0.05;
+            // Dynamic movement through tunnel based on scroll
+            tunnelGroup.position.z = scrollY * 180;
+            particles.position.z = scrollY * 150;
+
+            // Subtle rotation
+            tunnelGroup.rotation.z += 0.001;
+
+            // Smooth camera parallax
+            camera.position.x += (mouseX * 4 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 3 - camera.position.y) * 0.05;
+            camera.lookAt(0, 0, -20);
+
             renderer.render(scene, camera);
         }
         animate();
 
-        let mouseX = 0, mouseY = 0;
-        addEventListener('mousemove', e => { mouseX = e.clientX / innerWidth - 0.5; mouseY = e.clientY / innerHeight - 0.5; });
-        addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+        window.addEventListener('mousemove', e => {
+            mouseX = (e.clientX / window.innerWidth) - 0.5;
+            mouseY = (e.clientY / window.innerHeight) - 0.5;
+        });
 
-        // Slides
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Navigation and Slides
         const slides = document.querySelectorAll('.slide');
         const nav = document.getElementById('nav');
-        nav.innerHTML = slides.length ? Array.from({ length: slides.length }, (_, i) => `<div class="nav-dot" data-i="${i}"></div>`).join('') : '';
+        const progress = document.getElementById('progress');
+        const pageInfo = document.getElementById('page-info');
 
-        function updateNav(i) {
-            document.querySelectorAll('.nav-dot').forEach((d, j) => d.classList.toggle('active', i === j));
-            document.getElementById('page-info').textContent = `Slide ${i + 1} of ${slides.length} — ${slides[i].dataset.label || ''}`;
+        function initNavigation() {
+            nav.innerHTML = '';
+            slides.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'nav-dot';
+                dot.onclick = () => slides[i].scrollIntoView({ behavior: 'smooth' });
+                nav.appendChild(dot);
+            });
+            updateNavigation();
         }
 
-        nav.addEventListener('click', e => {
-            if (e.target.classList.contains('nav-dot')) {
-                slides[parseInt(e.target.dataset.i)].scrollIntoView({ behavior: 'smooth' });
-            }
-        });
+        function updateNavigation() {
+            const h = document.documentElement.scrollHeight - window.innerHeight;
+            scrollY = h > 0 ? window.scrollY / h : 0;
+            progress.style.width = `${scrollY * 100}%`;
 
-        window.addEventListener('scroll', () => {
-            const docH = document.documentElement.scrollHeight - innerHeight;
-            scrollY = docH > 0 ? window.scrollY / docH : 0;
-            document.getElementById('progress').style.width = `${scrollY * 100}%`;
-            let cur = 0;
-            slides.forEach((s, i) => { if (window.scrollY >= s.offsetTop - innerHeight / 2) cur = i; });
-            updateNav(cur);
-        });
-        updateNav(0);
+            let current = 0;
+            slides.forEach((s, i) => {
+                if (window.scrollY >= s.offsetTop - window.innerHeight / 2) current = i;
+            });
+
+            document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+            pageInfo.textContent = `Slide ${current + 1} of ${slides.length} — ${slides[current].dataset.label}`;
+        }
+
+        window.addEventListener('scroll', updateNavigation);
 
         // Charts
-        const cOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff', font: { size: 10 } } } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.6)', font: { size: 9 } }, grid: { color: 'rgba(77,184,217,0.1)' } }, y: { ticks: { color: 'rgba(255,255,255,0.6)', font: { size: 9 } }, grid: { color: 'rgba(77,184,217,0.1)' } } } };
-        new Chart(document.getElementById('revChart'), { type: 'bar', data: { labels: ['Q1', 'Q2', 'Q3', 'Q4 Target'], datasets: [{ label: 'Revenue (Cr)', data: [7.4, 12.1, 15.4, 18], backgroundColor: ['#4db8d9', '#4db8d9', '#5cc8e8', '#8be0f5'] }] }, options: cOpts });
-        new Chart(document.getElementById('channelChart'), { type: 'doughnut', data: { labels: ['Amazon', 'Flipkart', 'Pepperfry', 'Urban Ladder', 'D2C', 'Others'], datasets: [{ data: [21, 18, 16, 14, 10, 21], backgroundColor: ['#4db8d9', '#5cc8e8', '#7dd3e8', '#8be0f5', '#3a9dbf', '#2d7d99'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#fff', font: { size: 9 } } } } } });
-        new Chart(document.getElementById('marginChart'), { type: 'line', data: { labels: ['Q1', 'Q2', 'Q3'], datasets: [{ label: 'Gross Margin %', data: [36, 38, 42], borderColor: '#4db8d9', tension: 0.4, fill: true, backgroundColor: 'rgba(77,184,217,0.1)' }, { label: 'EBITDA Margin %', data: [8, 16, 18.2], borderColor: '#8be0f5', tension: 0.4 }] }, options: cOpts });
-        new Chart(document.getElementById('productChart'), { type: 'pie', data: { labels: ['Study Tables', 'TV Units', 'Bookshelves', 'Chairs', 'Others'], datasets: [{ data: [37, 27, 20, 10, 6], backgroundColor: ['#4db8d9', '#5cc8e8', '#7dd3e8', '#8be0f5', '#3a9dbf'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#fff', font: { size: 9 } } } } } });
-        new Chart(document.getElementById('outlookChart'), { type: 'bar', data: { labels: ['Q1', 'Q2', 'Q3', 'Q4'], datasets: [{ label: 'Revenue (Cr)', data: [7.4, 12.1, 15.4, 18], backgroundColor: ['#4db8d9', '#4db8d9', '#5cc8e8', '#8be0f5'] }] }, options: cOpts });
+        let charts = {};
+        const chartConfig = {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 1500, easing: 'easeOutQuart' },
+            plugins: { legend: { labels: { color: '#fff', font: { family: 'Inter', size: 10 } } } },
+            scales: {
+                x: { ticks: { color: 'rgba(255,255,255,0.6)', font: { size: 9 } }, grid: { color: 'rgba(77,184,217,0.1)' } },
+                y: { ticks: { color: 'rgba(255,255,255,0.6)', font: { size: 9 } }, grid: { color: 'rgba(77,184,217,0.1)' } }
+            }
+        };
 
-        // Modal
-        document.getElementById('edit-btn').onclick = () => document.getElementById('modal').classList.add('show');
-        document.getElementById('close-modal').onclick = () => document.getElementById('modal').classList.remove('show');
+        function renderCharts() {
+            // Revenue Chart
+            if (charts.rev) charts.rev.destroy();
+            charts.rev = new Chart(document.getElementById('revChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4 Target'],
+                    datasets: [{
+                        label: 'Revenue (Cr)',
+                        data: [reportData.q1, reportData.q2, reportData.q3, reportData.q4],
+                        backgroundColor: ['#4db8d9', '#4db8d9', '#5cc8e8', '#8be0f5'],
+                        borderRadius: 4
+                    }]
+                },
+                options: chartConfig
+            });
+
+            // Channel Chart
+            if (charts.channel) charts.channel.destroy();
+            charts.channel = new Chart(document.getElementById('channelChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Amazon', 'Flipkart', 'Pepperfry', 'Urban Ladder', 'D2C', 'Others'],
+                    datasets: [{
+                        data: [21, 18, 16, 14, 10, 21],
+                        backgroundColor: ['#4db8d9', '#5cc8e8', '#7dd3e8', '#8be0f5', '#3a9dbf', '#2d7d99'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { ...chartConfig, plugins: { ...chartConfig.plugins, legend: { position: 'right', labels: { color: '#fff' } } } }
+            });
+
+            // Margin Chart
+            if (charts.margin) charts.margin.destroy();
+            charts.margin = new Chart(document.getElementById('marginChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3'],
+                    datasets: [{
+                        label: 'Gross Margin %',
+                        data: [36, 38, reportData.margin],
+                        borderColor: '#4db8d9',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(77,184,217,0.1)'
+                    }, {
+                        label: 'EBITDA Margin %',
+                        data: [8, 16, 18.2],
+                        borderColor: '#8be0f5',
+                        tension: 0.4
+                    }]
+                },
+                options: chartConfig
+            });
+
+            // Product Mix Chart
+            if (charts.product) charts.product.destroy();
+            charts.product = new Chart(document.getElementById('productChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Study Tables', 'TV Units', 'Bookshelves', 'Chairs', 'Others'],
+                    datasets: [{
+                        data: [37, 27, 20, 10, 6],
+                        backgroundColor: ['#4db8d9', '#5cc8e8', '#7dd3e8', '#8be0f5', '#3a9dbf'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { ...chartConfig, plugins: { ...chartConfig.plugins, legend: { position: 'right', labels: { color: '#fff' } } } }
+            });
+
+            // Outlook Chart
+            if (charts.outlook) charts.outlook.destroy();
+            charts.outlook = new Chart(document.getElementById('outlookChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [{
+                        label: 'Revenue (Cr)',
+                        data: [reportData.q1, reportData.q2, reportData.q3, reportData.q4],
+                        backgroundColor: ['#4db8d9', '#4db8d9', '#5cc8e8', '#8be0f5'],
+                        borderRadius: 4
+                    }]
+                },
+                options: chartConfig
+            });
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('modal');
+        const editBtn = document.getElementById('edit-btn');
+        const closeBtn = document.getElementById('close-modal');
+
+        editBtn.onclick = () => {
+            const inputs = modal.querySelectorAll('input');
+            inputs[0].value = reportData.revenue;
+            inputs[1].value = reportData.profit;
+            inputs[2].value = reportData.margin;
+            inputs[3].value = parseInt(reportData.orders);
+            inputs[4].value = reportData.ebitda;
+            inputs[5].value = reportData.nps;
+            modal.classList.add('show');
+        };
+
+        closeBtn.onclick = () => modal.classList.remove('show');
+
+        function saveChanges() {
+            const inputs = modal.querySelectorAll('input');
+            reportData.revenue = inputs[0].value;
+            reportData.profit = inputs[1].value;
+            reportData.margin = inputs[2].value;
+            reportData.orders = (parseInt(inputs[3].value) / 1000).toFixed(1) + 'K';
+            reportData.ebitda = inputs[4].value;
+            reportData.nps = inputs[5].value;
+            reportData.q3 = parseFloat(inputs[0].value);
+
+            updateUI();
+            modal.classList.remove('show');
+        }
+
+        // Attach save function
+        document.querySelector('.save-btn').onclick = saveChanges;
+
+        // Export
         document.getElementById('export-btn').onclick = () => {
-            const d = { revenue: 15.4, profit: 1.9, margin: 42, orders: 12400, ebitda: 2.8 };
-            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)])); a.download = 'bluewud_q3.json'; a.click();
+            const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `bluewud_report_q3_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        };
+
+        // Initialize everything
+        window.onload = () => {
+            initNavigation();
+            updateUI();
+            // Force a resize check for charts
+            setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
         };
     </script>
 </body>
