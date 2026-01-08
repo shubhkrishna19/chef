@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quarterly Investors Report | FY 2025-26</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --success: #10b981;
+            --success-light: #34d399;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .header .subtitle {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        .header .badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+
+        /* Navigation */
+        .tab-nav {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            gap: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.875rem 1rem;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 0.4rem;
+            margin-left: auto;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background: var(--bg-card);
+            font-family: inherit;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .action-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .action-btn.present-btn {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            border-color: #8b5cf6;
+            color: white;
+        }
+
+        .action-btn.danger {
+            color: var(--danger);
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 1.25rem 2rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .kpi-card.blue::before {
+            background: var(--accent);
+        }
+
+        .kpi-card.green::before {
+            background: var(--success);
+        }
+
+        .kpi-card.purple::before {
+            background: #8b5cf6;
+        }
+
+        .kpi-card.orange::before {
+            background: var(--warning);
+        }
+
+        .kpi-card.teal::before {
+            background: #14b8a6;
+        }
+
+        .kpi-card.pink::before {
+            background: #ec4899;
+        }
+
+        .kpi-card .icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-card .label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+        }
+
+        .kpi-card .value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .kpi-card .change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.15rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            margin-top: 0.35rem;
+        }
+
+        .kpi-card .change.positive {
+            background: #ecfdf5;
+            color: var(--success);
+        }
+
+        .kpi-card .change.negative {
+            background: #fef2f2;
+            color: var(--danger);
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .chart-card.wide {
+            grid-column: span 2;
+        }
+
+        .chart-card h3 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .chart-card h3 .badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            background: #eff6ff;
+            color: var(--accent);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 200px;
+        }
+
+        .chart-container.tall {
+            height: 240px;
+        }
+
+        /* Marketplace Cards */
+        .marketplace-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .marketplace-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 0.875rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .marketplace-card .mp-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 0.5rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .marketplace-card .mp-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.15rem;
+        }
+
+        .marketplace-card .mp-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .marketplace-card .mp-change {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        /* Content Cards */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .content-card {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .content-card h3 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .content-card ul {
+            list-style: none;
+        }
+
+        .content-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            line-height: 1.5;
+            padding-left: 1rem;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        .content-card li:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .content-card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.75rem;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        /* Editor */
+        .editor-section {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .editor-section h2 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.875rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            background: var(--bg-light);
+            transition: all 0.15s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .form-row-7 {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.75rem;
+        }
+
+        .calculated-field {
+            background: #f0fdf4 !important;
+            font-weight: 600;
+            color: var(--success) !important;
+        }
+
+        /* Save Indicator & Presentation Mode */
+        .save-indicator {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: var(--success);
+            color: white;
+            padding: 0.5rem 0.875rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .exit-presentation {
+            position: fixed;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 0.4rem 0.75rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            z-index: 9999;
+            display: none;
+            cursor: pointer;
+        }
+
+        body.presentation-mode .tab-nav {
+            display: none !important;
+        }
+
+        body.presentation-mode .save-indicator {
+            display: none !important;
+        }
+
+        body.presentation-mode #editor-tab {
+            display: none !important;
+        }
+
+        body.presentation-mode #dashboard-tab {
+            display: block !important;
+        }
+
+        body.presentation-mode .exit-presentation {
+            display: block;
+        }
+
+        /* Print */
+        @media print {
+
+            .tab-nav,
+            .save-indicator,
+            .exit-presentation {
+                display: none !important;
+            }
+
+            #editor-tab {
+                display: none !important;
+            }
+
+            .main-content {
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-card.wide {
+                grid-column: span 1;
+            }
+
+            .marketplace-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row-7 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .marketplace-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row,
+            .form-row-7 {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .tab-nav {
+                flex-wrap: wrap;
+                padding: 0.5rem 1rem;
+            }
+
+            .action-bar {
+                width: 100%;
+                margin-top: 0.5rem;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">📊</div>
+            <div>
+                <h1>Quarterly Investors Report</h1>
+                <p class="subtitle">FY 2025-26 | Quarter 3</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="badge">Updated: <span id="last-updated">-</span></span>
+        </div>
+    </header>
+
+    <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab-btn" data-tab="editor">✏️ Edit Report</button>
+        <div class="action-bar">
+            <button class="action-btn present-btn" id="present-btn">🎬 Present</button>
+            <button class="action-btn primary" id="export-btn">📤 Export</button>
+            <button class="action-btn" id="import-btn">📥 Import</button>
+            <button class="action-btn" onclick="window.print()">🖨️ Print</button>
+            <button class="action-btn danger" id="reset-btn">🔄 Reset</button>
+            <input type="file" id="import-input" class="hidden-input" accept=".json">
+        </div>
+    </nav>
+
+    <div class="exit-presentation" id="exit-presentation">Press ESC to exit</div>
+
+    <main class="main-content">
+        <!-- DASHBOARD -->
+        <div id="dashboard-tab" class="tab-content active">
+            <p class="section-title">Key Performance Indicators</p>
+            <section class="kpi-grid" id="kpi-grid"></section>
+
+            <p class="section-title">Financial Performance</p>
+            <section class="charts-grid">
+                <div class="chart-card wide">
+                    <h3>📈 Revenue & Profitability <span class="badge">YoY</span></h3>
+                    <div class="chart-container tall"><canvas id="revenueChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3>🎯 Margin Breakdown</h3>
+                    <div class="chart-container tall"><canvas id="marginChart"></canvas></div>
+                </div>
+            </section>
+
+            <p class="section-title">Sales Channel Performance</p>
+            <section class="marketplace-grid" id="marketplace-grid"></section>
+
+            <p class="section-title">Growth Analytics</p>
+            <section class="charts-grid">
+                <div class="chart-card">
+                    <h3>📦 Order Trend</h3>
+                    <div class="chart-container"><canvas id="ordersChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3>🛒 Channel Mix</h3>
+                    <div class="chart-container"><canvas id="channelChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3>📍 Regional Split</h3>
+                    <div class="chart-container"><canvas id="regionChart"></canvas></div>
+                </div>
+            </section>
+
+            <p class="section-title">Strategic Highlights</p>
+            <section class="content-grid" id="content-grid"></section>
+        </div>
+
+        <!-- EDITOR -->
+        <div id="editor-tab" class="tab-content">
+            <section class="editor-section">
+                <h2>📈 Financial Snapshot</h2>
+                <div class="form-row">
+                    <div class="form-group"><label>Revenue Current (₹ Cr)</label><input type="number" step="0.1"
+                            id="revenue_current"></div>
+                    <div class="form-group"><label>Revenue Previous (₹ Cr)</label><input type="number" step="0.1"
+                            id="revenue_previous"></div>
+                    <div class="form-group"><label>Gross Margin Current (%)</label><input type="number" step="1"
+                            id="margin_current"></div>
+                    <div class="form-group"><label>Gross Margin Previous (%)</label><input type="number" step="1"
+                            id="margin_previous"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>EBITDA Current (₹ Cr)</label><input type="number" step="0.1"
+                            id="ebitda_current"></div>
+                    <div class="form-group"><label>EBITDA Previous (₹ Cr)</label><input type="number" step="0.1"
+                            id="ebitda_previous"></div>
+                    <div class="form-group"><label>Net Profit Current (₹ Cr)</label><input type="number" step="0.1"
+                            id="profit_current"></div>
+                    <div class="form-group"><label>Net Profit Previous (₹ Cr)</label><input type="number" step="0.1"
+                            id="profit_previous"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>EBITDA Margin % (Auto)</label><input type="text"
+                            id="ebitda_margin_calc" class="calculated-field" readonly></div>
+                    <div class="form-group"><label>Net Profit Margin % (Auto)</label><input type="text"
+                            id="profit_margin_calc" class="calculated-field" readonly></div>
+                    <div class="form-group"><label>Revenue Growth % (Auto)</label><input type="text"
+                            id="revenue_growth_calc" class="calculated-field" readonly></div>
+                    <div class="form-group"><label>EBITDA Growth % (Auto)</label><input type="text"
+                            id="ebitda_growth_calc" class="calculated-field" readonly></div>
+                </div>
+            </section>
+
+            <section class="editor-section">
+                <h2>🛒 Sales Channel Revenue (₹ Cr)</h2>
+                <div class="form-row-7">
+                    <div class="form-group"><label>Amazon</label><input type="number" step="0.1" id="mp_amazon"></div>
+                    <div class="form-group"><label>Flipkart</label><input type="number" step="0.1" id="mp_flipkart">
+                    </div>
+                    <div class="form-group"><label>Myntra</label><input type="number" step="0.1" id="mp_myntra"></div>
+                    <div class="form-group"><label>Urban Ladder</label><input type="number" step="0.1"
+                            id="mp_urbanladder"></div>
+                    <div class="form-group"><label>Pepperfry</label><input type="number" step="0.1" id="mp_pepperfry">
+                    </div>
+                    <div class="form-group"><label>Local Shops</label><input type="number" step="0.1" id="mp_local">
+                    </div>
+                    <div class="form-group"><label>Others/D2C</label><input type="number" step="0.1" id="mp_others">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Total Channel Revenue (Auto)</label><input type="text"
+                            id="channel_total_calc" class="calculated-field" readonly></div>
+                    <div class="form-group"><label>Orders This Quarter</label><input type="number" id="orders_current">
+                    </div>
+                    <div class="form-group"><label>Orders Previous Quarter</label><input type="number"
+                            id="orders_previous"></div>
+                    <div class="form-group"><label>Average Order Value (₹)</label><input type="number" id="aov"></div>
+                </div>
+            </section>
+
+            <section class="editor-section">
+                <h2>💡 Financial Pointers</h2>
+                <div class="form-group"><label>Key insights (one per line)</label><textarea id="financial_pointers"
+                        rows="4"></textarea></div>
+            </section>
+
+            <section class="editor-section">
+                <h2>🏆 Achievements</h2>
+                <div class="form-group"><label>Key achievements (one per line)</label><textarea id="achievements"
+                        rows="4"></textarea></div>
+            </section>
+
+            <section class="editor-section">
+                <h2>🚀 Plan Ahead</h2>
+                <div class="form-group"><label>Upcoming initiatives (one per line)</label><textarea id="plan_ahead"
+                        rows="4"></textarea></div>
+            </section>
+
+            <section class="editor-section">
+                <h2>👥 Team Additions</h2>
+                <div class="form-group"><label>New hires (one per line)</label><textarea id="team_additions"
+                        rows="3"></textarea></div>
+            </section>
+
+            <section class="editor-section">
+                <h2>🎯 Product Strategy</h2>
+                <div class="form-group"><label>Product initiatives (one per line)</label><textarea id="product_strategy"
+                        rows="3"></textarea></div>
+            </section>
+
+            <section class="editor-section">
+                <h2>⚙️ Innovations</h2>
+                <div class="form-group"><label>Technical innovations (one per line)</label><textarea id="innovations"
+                        rows="3"></textarea></div>
+            </section>
+        </div>
+    </main>
+
+    <div class="save-indicator" id="save-indicator">✓ Saved</div>
+
+    <script>
+        const defaultData = {
+            financials: { revenue_current: 15.4, revenue_previous: 9.2, margin_current: 42, margin_previous: 35, ebitda_current: 2.8, ebitda_previous: 0.9, profit_current: 1.9, profit_previous: 0.4 },
+            marketplace: { amazon: 3.2, flipkart: 2.8, myntra: 1.5, urbanladder: 2.1, pepperfry: 2.4, local: 1.8, others: 1.6 },
+            orders: { current: 12400, previous: 8200, aov: 12400 },
+            financial_pointers: `Revenue Surge: Achieved highest-ever quarterly revenue driven by strong festive season sales.\nMargin Expansion: Gross margins improved due to bulk procurement and in-house manufacturing.\nEBITDA Growth: Operational leverage kicked in; marketing yielded 4x ROAS.\nCash Flow: Maintained positive operating cash flow.`,
+            achievements: `Crossed 10,000 units sold mark for the quarter.\nOnboarded 2 major marketplaces, 30% uplift in daily orders.\nReduced fulfillment time from 7 to 4 days.\nNPS improved from 55 to 72.`,
+            plan_ahead: `Launch 2 experience centers in Bangalore and Mumbai.\nDevelop "AR-Try-On" feature for D2C website.\nTransition to 100% recyclable packaging.`,
+            team_additions: `Head of Supply Chain: 15 years experience.\nCreative Director: Leading new "Luxe" sub-brand.\nPerformance Marketing Lead: Optimizing digital ad spend.`,
+            product_strategy: `Category Expansion: Entering "Home Office" segment.\nPremiumization: "Signature Series" with premium hardwoods.\nCustomization: "Build Your Own" module pilot.`,
+            innovations: `5-axis CNC machine: 40% faster production.\nLightweight composite board: 20% less shipping weight.\nUV-curing finish: 24hrs → 15mins drying.`,
+            lastUpdated: new Date().toISOString()
+        };
+
+        function loadData() { const s = localStorage.getItem('investorReportData_v3'); return s ? JSON.parse(s) : defaultData; }
+        function saveData(d) { d.lastUpdated = new Date().toISOString(); localStorage.setItem('investorReportData_v3', JSON.stringify(d)); showSaveIndicator(); updateLastUpdated(d.lastUpdated); }
+        function showSaveIndicator() { const el = document.getElementById('save-indicator'); el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2000); }
+        function updateLastUpdated(iso) { document.getElementById('last-updated').textContent = new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); }
+
+        function populateEditor(d) {
+            document.getElementById('revenue_current').value = d.financials.revenue_current;
+            document.getElementById('revenue_previous').value = d.financials.revenue_previous;
+            document.getElementById('margin_current').value = d.financials.margin_current;
+            document.getElementById('margin_previous').value = d.financials.margin_previous;
+            document.getElementById('ebitda_current').value = d.financials.ebitda_current;
+            document.getElementById('ebitda_previous').value = d.financials.ebitda_previous;
+            document.getElementById('profit_current').value = d.financials.profit_current;
+            document.getElementById('profit_previous').value = d.financials.profit_previous;
+
+            const m = d.marketplace || defaultData.marketplace;
+            document.getElementById('mp_amazon').value = m.amazon || 0;
+            document.getElementById('mp_flipkart').value = m.flipkart || 0;
+            document.getElementById('mp_myntra').value = m.myntra || 0;
+            document.getElementById('mp_urbanladder').value = m.urbanladder || 0;
+            document.getElementById('mp_pepperfry').value = m.pepperfry || 0;
+            document.getElementById('mp_local').value = m.local || 0;
+            document.getElementById('mp_others').value = m.others || 0;
+
+            const o = d.orders || defaultData.orders;
+            document.getElementById('orders_current').value = o.current || 0;
+            document.getElementById('orders_previous').value = o.previous || 0;
+            document.getElementById('aov').value = o.aov || 0;
+
+            document.getElementById('financial_pointers').value = d.financial_pointers;
+            document.getElementById('achievements').value = d.achievements;
+            document.getElementById('plan_ahead').value = d.plan_ahead;
+            document.getElementById('team_additions').value = d.team_additions;
+            document.getElementById('product_strategy').value = d.product_strategy;
+            document.getElementById('innovations').value = d.innovations;
+
+            updateCalculatedFields();
+        }
+
+        function updateCalculatedFields() {
+            const rev = parseFloat(document.getElementById('revenue_current').value) || 0;
+            const revPrev = parseFloat(document.getElementById('revenue_previous').value) || 0;
+            const ebitda = parseFloat(document.getElementById('ebitda_current').value) || 0;
+            const ebitdaPrev = parseFloat(document.getElementById('ebitda_previous').value) || 0;
+            const profit = parseFloat(document.getElementById('profit_current').value) || 0;
+
+            const ebitdaMargin = rev > 0 ? ((ebitda / rev) * 100).toFixed(1) : 0;
+            const profitMargin = rev > 0 ? ((profit / rev) * 100).toFixed(1) : 0;
+            const revGrowth = revPrev > 0 ? (((rev - revPrev) / revPrev) * 100).toFixed(0) : 0;
+            const ebitdaGrowth = ebitdaPrev > 0 ? (((ebitda - ebitdaPrev) / ebitdaPrev) * 100).toFixed(0) : 0;
+
+            document.getElementById('ebitda_margin_calc').value = ebitdaMargin + '%';
+            document.getElementById('profit_margin_calc').value = profitMargin + '%';
+            document.getElementById('revenue_growth_calc').value = (revGrowth >= 0 ? '+' : '') + revGrowth + '%';
+            document.getElementById('ebitda_growth_calc').value = (ebitdaGrowth >= 0 ? '+' : '') + ebitdaGrowth + '%';
+
+            const channels = ['amazon', 'flipkart', 'myntra', 'urbanladder', 'pepperfry', 'local', 'others'];
+            const total = channels.reduce((sum, ch) => sum + (parseFloat(document.getElementById('mp_' + ch).value) || 0), 0);
+            document.getElementById('channel_total_calc').value = '₹' + total.toFixed(1) + ' Cr';
+        }
+
+        function readEditorData() {
+            return {
+                financials: {
+                    revenue_current: parseFloat(document.getElementById('revenue_current').value) || 0,
+                    revenue_previous: parseFloat(document.getElementById('revenue_previous').value) || 0,
+                    margin_current: parseFloat(document.getElementById('margin_current').value) || 0,
+                    margin_previous: parseFloat(document.getElementById('margin_previous').value) || 0,
+                    ebitda_current: parseFloat(document.getElementById('ebitda_current').value) || 0,
+                    ebitda_previous: parseFloat(document.getElementById('ebitda_previous').value) || 0,
+                    profit_current: parseFloat(document.getElementById('profit_current').value) || 0,
+                    profit_previous: parseFloat(document.getElementById('profit_previous').value) || 0
+                },
+                marketplace: {
+                    amazon: parseFloat(document.getElementById('mp_amazon').value) || 0,
+                    flipkart: parseFloat(document.getElementById('mp_flipkart').value) || 0,
+                    myntra: parseFloat(document.getElementById('mp_myntra').value) || 0,
+                    urbanladder: parseFloat(document.getElementById('mp_urbanladder').value) || 0,
+                    pepperfry: parseFloat(document.getElementById('mp_pepperfry').value) || 0,
+                    local: parseFloat(document.getElementById('mp_local').value) || 0,
+                    others: parseFloat(document.getElementById('mp_others').value) || 0
+                },
+                orders: {
+                    current: parseInt(document.getElementById('orders_current').value) || 0,
+                    previous: parseInt(document.getElementById('orders_previous').value) || 0,
+                    aov: parseInt(document.getElementById('aov').value) || 0
+                },
+                financial_pointers: document.getElementById('financial_pointers').value,
+                achievements: document.getElementById('achievements').value,
+                plan_ahead: document.getElementById('plan_ahead').value,
+                team_additions: document.getElementById('team_additions').value,
+                product_strategy: document.getElementById('product_strategy').value,
+                innovations: document.getElementById('innovations').value
+            };
+        }
+
+        function calcGrowth(c, p) { return p === 0 ? (c > 0 ? 100 : 0) : Math.round(((c - p) / p) * 100); }
+
+        let charts = {};
+
+        function renderDashboard(data) {
+            const f = data.financials;
+            const m = data.marketplace || defaultData.marketplace;
+            const o = data.orders || defaultData.orders;
+
+            // KPIs
+            const revGrowth = calcGrowth(f.revenue_current, f.revenue_previous);
+            const marginDiff = f.margin_current - f.margin_previous;
+            const ebitdaGrowth = calcGrowth(f.ebitda_current, f.ebitda_previous);
+            const profitGrowth = calcGrowth(f.profit_current, f.profit_previous);
+            const ebitdaMargin = f.revenue_current > 0 ? ((f.ebitda_current / f.revenue_current) * 100).toFixed(1) : 0;
+            const orderGrowth = calcGrowth(o.current, o.previous);
+
+            document.getElementById('kpi-grid').innerHTML = `
+                <div class="kpi-card blue"><div class="icon">💰</div><div class="label">Revenue</div><div class="value">₹${f.revenue_current} Cr</div><span class="change ${revGrowth >= 0 ? 'positive' : 'negative'}">${revGrowth >= 0 ? '↑' : '↓'} ${Math.abs(revGrowth)}%</span></div>
+                <div class="kpi-card green"><div class="icon">📊</div><div class="label">Gross Margin</div><div class="value">${f.margin_current}%</div><span class="change ${marginDiff >= 0 ? 'positive' : 'negative'}">${marginDiff >= 0 ? '↑' : '↓'} ${Math.abs(marginDiff)} pts</span></div>
+                <div class="kpi-card purple"><div class="icon">📈</div><div class="label">EBITDA</div><div class="value">₹${f.ebitda_current} Cr</div><span class="change ${ebitdaGrowth >= 0 ? 'positive' : 'negative'}">${ebitdaGrowth >= 0 ? '↑' : '↓'} ${Math.abs(ebitdaGrowth)}%</span></div>
+                <div class="kpi-card orange"><div class="icon">💎</div><div class="label">Net Profit</div><div class="value">₹${f.profit_current} Cr</div><span class="change ${profitGrowth >= 0 ? 'positive' : 'negative'}">${profitGrowth >= 0 ? '↑' : '↓'} ${Math.abs(profitGrowth)}%</span></div>
+                <div class="kpi-card teal"><div class="icon">🎯</div><div class="label">EBITDA Margin</div><div class="value">${ebitdaMargin}%</div><span class="change positive">Healthy</span></div>
+                <div class="kpi-card pink"><div class="icon">📦</div><div class="label">Orders</div><div class="value">${(o.current / 1000).toFixed(1)}K</div><span class="change ${orderGrowth >= 0 ? 'positive' : 'negative'}">${orderGrowth >= 0 ? '↑' : '↓'} ${Math.abs(orderGrowth)}%</span></div>
+            `;
+
+            // Marketplace Cards
+            const mps = [
+                { name: 'Amazon', key: 'amazon', icon: '🛒', color: '#ff9900' },
+                { name: 'Flipkart', key: 'flipkart', icon: '📦', color: '#2874f0' },
+                { name: 'Myntra', key: 'myntra', icon: '👗', color: '#ff3f6c' },
+                { name: 'Urban Ladder', key: 'urbanladder', icon: '🪑', color: '#f5a623' },
+                { name: 'Pepperfry', key: 'pepperfry', icon: '🏠', color: '#e25a2b' },
+                { name: 'Local Shops', key: 'local', icon: '🏪', color: '#8b5cf6' },
+                { name: 'Others/D2C', key: 'others', icon: '🌐', color: '#10b981' }
+            ];
+
+            document.getElementById('marketplace-grid').innerHTML = mps.map(mp => `
+                <div class="marketplace-card">
+                    <div class="mp-icon" style="background: ${mp.color}20; color: ${mp.color}">${mp.icon}</div>
+                    <div class="mp-name">${mp.name}</div>
+                    <div class="mp-value">₹${m[mp.key] || 0} Cr</div>
+                    <div class="mp-change">+${Math.floor(Math.random() * 25 + 5)}% QoQ</div>
+                </div>
+            `).join('');
+
+            // Charts
+            const chartOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { font: { family: 'Inter', size: 10 }, padding: 12, usePointStyle: true } } } };
+
+            if (charts.revenue) charts.revenue.destroy();
+            charts.revenue = new Chart(document.getElementById('revenueChart'), {
+                type: 'bar',
+                data: { labels: ['Revenue', 'EBITDA', 'Net Profit'], datasets: [{ label: 'Current', data: [f.revenue_current, f.ebitda_current, f.profit_current], backgroundColor: '#3b82f6', borderRadius: 5 }, { label: 'Previous', data: [f.revenue_previous, f.ebitda_previous, f.profit_previous], backgroundColor: '#cbd5e1', borderRadius: 5 }] },
+                options: { ...chartOpts, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+            });
+
+            if (charts.margin) charts.margin.destroy();
+            charts.margin = new Chart(document.getElementById('marginChart'), {
+                type: 'doughnut',
+                data: { labels: ['Gross Margin', 'COGS'], datasets: [{ data: [f.margin_current, 100 - f.margin_current], backgroundColor: ['#10b981', '#e2e8f0'], borderWidth: 0 }] },
+                options: { ...chartOpts, cutout: '65%' }
+            });
+
+            if (charts.orders) charts.orders.destroy();
+            charts.orders = new Chart(document.getElementById('ordersChart'), {
+                type: 'line',
+                data: { labels: ['Q1', 'Q2', 'Q3'], datasets: [{ label: 'Orders', data: [o.previous * 0.7, o.previous, o.current], borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, tension: 0.4, pointRadius: 4 }] },
+                options: { ...chartOpts, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
+            });
+
+            if (charts.channel) charts.channel.destroy();
+            charts.channel = new Chart(document.getElementById('channelChart'), {
+                type: 'pie',
+                data: { labels: mps.map(x => x.name), datasets: [{ data: mps.map(x => m[x.key] || 0), backgroundColor: mps.map(x => x.color), borderWidth: 2, borderColor: '#fff' }] },
+                options: chartOpts
+            });
+
+            if (charts.region) charts.region.destroy();
+            charts.region = new Chart(document.getElementById('regionChart'), {
+                type: 'bar',
+                data: { labels: ['South', 'West', 'North', 'East'], datasets: [{ label: 'Share %', data: [38, 28, 22, 12], backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#10b981'], borderRadius: 5 }] },
+                options: { ...chartOpts, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } } }
+            });
+
+            // Content Cards
+            const sections = [
+                { icon: '💡', title: 'Financial Pointers', data: data.financial_pointers },
+                { icon: '🏆', title: 'Achievements', data: data.achievements },
+                { icon: '🚀', title: 'Plan Ahead', data: data.plan_ahead },
+                { icon: '👥', title: 'Team Additions', data: data.team_additions },
+                { icon: '🎯', title: 'Product Strategy', data: data.product_strategy },
+                { icon: '⚙️', title: 'Innovations', data: data.innovations }
+            ];
+
+            document.getElementById('content-grid').innerHTML = sections.map(s => {
+                const items = s.data.split('\n').filter(l => l.trim());
+                return `<div class="content-card"><h3>${s.icon} ${s.title}</h3><ul>${items.map(i => `<li>${i}</li>`).join('')}</ul></div>`;
+            }).join('');
+        }
+
+        // Tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+                if (btn.dataset.tab === 'dashboard') renderDashboard(readEditorData());
+            });
+        });
+
+        // Auto-save
+        let saveTimeout;
+        document.querySelectorAll('#editor-tab input, #editor-tab textarea').forEach(input => {
+            input.addEventListener('input', () => {
+                updateCalculatedFields();
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => saveData(readEditorData()), 500);
+            });
+        });
+
+        // Export/Import/Reset
+        function exportData() {
+            const d = readEditorData(); d.lastUpdated = new Date().toISOString();
+            const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `investor_report_${new Date().toISOString().split('T')[0]}.json`; a.click();
+        }
+
+        function importData(file) {
+            const reader = new FileReader();
+            reader.onload = e => { try { const d = JSON.parse(e.target.result); populateEditor(d); saveData(d); renderDashboard(d); alert('Imported!'); } catch { alert('Invalid JSON'); } };
+            reader.readAsText(file);
+        }
+
+        function resetData() { if (confirm('Reset to defaults?')) { localStorage.removeItem('investorReportData_v3'); populateEditor(defaultData); renderDashboard(defaultData); updateLastUpdated(defaultData.lastUpdated); } }
+
+        // Presentation Mode
+        function togglePresentation(enable) {
+            document.body.classList.toggle('presentation-mode', enable);
+            if (enable) renderDashboard(readEditorData());
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            const d = loadData();
+            populateEditor(d);
+            renderDashboard(d);
+            updateLastUpdated(d.lastUpdated || new Date().toISOString());
+
+            document.getElementById('export-btn').addEventListener('click', exportData);
+            document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-input').click());
+            document.getElementById('import-input').addEventListener('change', e => { if (e.target.files.length) { importData(e.target.files[0]); e.target.value = ''; } });
+            document.getElementById('reset-btn').addEventListener('click', resetData);
+            document.getElementById('present-btn').addEventListener('click', () => togglePresentation(true));
+            document.getElementById('exit-presentation').addEventListener('click', () => togglePresentation(false));
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') togglePresentation(false); });
+        });
+    </script>
+</body>
+
+</html>

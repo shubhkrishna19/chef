@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bluewud | Investors Report Q3 FY25-26</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a1628;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* 3D Canvas */
+        #tunnel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Slide Container */
+        .slides {
+            position: relative;
+            z-index: 10;
+        }
+
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .slide-inner {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(10, 22, 40, 0.92);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(77, 184, 217, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .logo-text .blue {
+            color: #4db8d9;
+        }
+
+        .logo-text .wud {
+            color: #8be0f5;
+        }
+
+        /* Progress */
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4db8d9, #8be0f5);
+            z-index: 200;
+        }
+
+        /* Nav */
+        .nav {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(77, 184, 217, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-dot.active {
+            background: #4db8d9;
+            box-shadow: 0 0 10px rgba(77, 184, 217, 0.6);
+        }
+
+        .nav-dot:hover {
+            transform: scale(1.3);
+        }
+
+        /* Page Info */
+        .page-info {
+            position: fixed;
+            left: 1.5rem;
+            bottom: 1.5rem;
+            font-size: 0.65rem;
+            color: rgba(77, 184, 217, 0.6);
+            z-index: 100;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid rgba(77, 184, 217, 0.3);
+            border-radius: 4px;
+            background: rgba(10, 22, 40, 0.9);
+            color: #4db8d9;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: rgba(77, 184, 217, 0.15);
+        }
+
+        .btn.primary {
+            background: #4db8d9;
+            color: #0a1628;
+            border: none;
+        }
+
+        /* Hero Slide */
+        .hero {
+            text-align: center;
+            background: transparent !important;
+            border: none !important;
+        }
+
+        .hero-logo {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-logo .blue {
+            color: #4db8d9;
+        }
+
+        .hero-logo .wud {
+            color: #8be0f5;
+        }
+
+        .hero-title {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .hero-period {
+            font-size: 0.9rem;
+            color: #4db8d9;
+            margin-top: 0.25rem;
+        }
+
+        /* Slide Header */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(77, 184, 217, 0.15);
+        }
+
+        .slide-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4db8d9;
+        }
+
+        .slide-label {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Metrics Grid */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .metric {
+            background: rgba(77, 184, 217, 0.08);
+            border: 1px solid rgba(77, 184, 217, 0.15);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .metric-label {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.15rem;
+        }
+
+        .metric-change {
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+        }
+
+        .up {
+            color: #10b981;
+        }
+
+        .down {
+            color: #ef4444;
+        }
+
+        /* Chart */
+        .chart-wrap {
+            height: 220px;
+            margin: 1rem 0;
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.6rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(77, 184, 217, 0.1);
+        }
+
+        .table th {
+            color: #4db8d9;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Two Col */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        /* List */
+        .list {
+            list-style: none;
+        }
+
+        .list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(77, 184, 217, 0.1);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .list .icon {
+            font-size: 1.1rem;
+        }
+
+        .list .title {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .list .desc {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 10, 20, 0.95);
+            z-index: 1000;
+            display: none;
+            overflow: auto;
+            padding: 2rem;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(15, 30, 50, 0.98);
+            border: 1px solid rgba(77, 184, 217, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.4rem;
+            border: 1px solid rgba(77, 184, 217, 0.2);
+            border-radius: 4px;
+            background: rgba(0, 50, 80, 0.3);
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #4db8d9;
+            border: none;
+            border-radius: 6px;
+            color: #0a1628;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+
+            .metrics,
+            .two-col,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="tunnel"></canvas>
+    <div class="progress" id="progress"></div>
+    <div class="nav" id="nav"></div>
+    <div class="page-info" id="page-info">Slide 1 of 10</div>
+    <div class="controls">
+        <button class="btn" id="edit-btn">Edit</button>
+        <button class="btn primary" id="export-btn">Export</button>
+    </div>
+
+    <div class="slides">
+        <!-- 1. Hero -->
+        <section class="slide" data-label="Introduction">
+            <div class="slide-inner hero">
+                <div class="hero-logo"><span class="blue">blue</span><span class="wud">wud</span></div>
+                <p class="hero-title">Quarterly Investors Report</p>
+                <p class="hero-period">Q3 FY 2025-26 | Oct-Dec 2025</p>
+            </div>
+        </section>
+
+        <!-- 2. Executive Summary -->
+        <section class="slide" data-label="Executive Summary">
+            <div class="slide-inner">
+                <div class="slide-header">
+                    <h2 class="slide-title">Executive Summary</h2><span class="slide-label">Q3 Highlights</span>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">₹15.4Cr</div>
+                        <div class="metric-label">Revenue</div>
+                        <div class="metric-change up">▲ 27% QoQ</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">₹1.9Cr</div>
+                        <div class="metric-label">Net Profit</div>
+                        <div class="metric-change up">▲ 73% QoQ</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">42%</div>
+                        <div class="metric-label">Gross Margin</div>
+                        <div class="metric-change up">▲ 4pp</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">12.4K</div>
+                        <div class="metric-label">Orders</div>
+                        <div class="metric-change up">▲ 27%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">₹2.8Cr</div>
+                        <div class="metric-label">EBITDA</div>
+                        <div class="metric-change up">▲ 47%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">72</div>
+                        <div class="metric-label">NPS Score</div>
+                        <div class="metric-change up">▲ 17pts</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Revenue Performance -->
+        <section class="slide" data-label="Revenue">
+            <div class="slide-inner">
+                <div class="slide-header">
+                    <h2 class="slide-title">Revenue Performance</h2><span class="slide-label">Quarterly Trend</span>
+                </div>
+                <div class="chart-wrap"><canvas id="revChart"></canvas></div>
+                <div class="metrics" style="margin-top:1rem">
+                    <div class="metric">
+                        <div class="metric-value">₹7.4Cr</div>
+                        <div class="metric-label">Q1</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">₹12.1Cr</div>
+                        <div class="metric-label">Q2</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">₹15.4Cr</div>
+                        <div class="metric-label">Q3</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Channel Mix -->
+        <section class="slide" data-label="Channels">
+            <div class="slide-inner">
+                <div class="slide-header">
+                    <h2 class="slide-title">Channel Performance</h2><span class="slide-label">Revenue by Platform</span>
+                </div>
+                <div class="two-col">
+                    <div class="chart-wrap"><canvas id="channelChart"></canvas></div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Channel</th>
+                                <th>Revenue</th>
+                                <th>Share</th>
+                                <th>Growth</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Amazon</td>
+                                <td>₹3.2Cr</td>
+                                <td>21%</td>
+                                <td class="up">+23%</td>
+                            </tr>
+                            <tr>
+                                <td>Flipkart</td>
+                                <td>₹2.8Cr</td>
+                                <td>18%</td>
+                                <td class="up">+27%</td>
+                            </tr>
+                            <tr>
+                                <td>Pepperfry</td>
+                                <td>₹2.4Cr</td>
+                                <td>16%</td>
+                                <td class="up">+20%</td>
+                            </tr>
+                            <tr>
+                                <td>Urban Ladder</td>
+                                <td>₹2.1Cr</td>
+                                <td>14%</td>
+                                <td class="up">+17%</td>
+                            </tr>
+                            <tr>
+                                <td>Website D2C</td>
+                                <td>₹1.6Cr</td>
+                                <td>10%</td>
+                                <td class="up">+78%</td>
+                            </tr>
+                            <tr>
+                                <td>Others</td>
+                                <td>₹3.3Cr</td>
+                                <td>21%</td>
+                                <td class="up">+15%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Profitability -->
+        <section class="slide" data-label="Profitability">
+            <div class="slide-inner">
+                <div class="slide-header">
+                    <h2 class="slide-title">Profitability Analysis</h2><span class="slide-label">Margin Trends</span>
+                </div>
+                <div class="chart-wrap"><canvas id="marginChart"></canvas></div>
+                <div class="metrics" style="margin-top:1rem">
+                    <div class="metric">
+                        <div class="metric-value">42%</div>
+                        <div class="metric-label">Gross Margin</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">18.2%</div>
+                        <div class="metric-label">EBITDA Margin</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">12.3%</div>
+                        <div class="metric-label">Net Margin</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Product Mix -->
+        <section class="slide" data-label="Products">
+            <div class="slide-inner">
+                <div class="slide-header">
+                    <h2 class="slide-title">Product Category Mix</h2><span class="slide-label">Revenue
+                        Distribution</span>
+                </div>
+                <div class="two-col">
+                    <div class="chart-wrap"><canvas id="productChart"></canvas></div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Units</th>
+                                <th>Revenue</th>
+                                <th>AOV</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Study Tables</td>
+                                <td>4,200</td>
+                                <td>₹5.8Cr</td>
+                                <td>₹13,810</td>
+                            </tr>
+                            <tr>
+                                <td>TV Units</td>
+                                <td>3,100</td>
+                                <td>₹4.2Cr</td>
+                                <td>₹13,548</td>
+                            </tr>
+                            <tr>
+                                <td>Bookshelves</td>
+                                <td>2,800</td>
+                                <td>₹3.1Cr</td>
+                                <td>₹11,071</td>
+                            </tr>
+                            <tr>
+                                <td>Office Chairs</td>
+                                <td>1,500</td>
+                                <td>₹1.5Cr</td>
+                                <td>₹10,000</td>
+                            </tr>
+                            <tr>
+                                <td>Others</td>
+                                <td>800</td>
+                                <td>₹0.8Cr</td>
+                                <td>₹10,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Key Achievements -->
+        <section class="slide" data-label="Achievements">
+            <div class="slide-inner">
+                <div class="slide-header">
+                    <h2 class="slide-title">Q3 Key Achievements</h2><span class="slide-label">Milestones</span>
+                </div>
+                <ul class="list">
+                    <li><span class="icon">🎯</span>
+                        <div>
+                            <div class="title">Crossed 10,000 Units Sold</div>
+                            <div class="desc">Record quarterly sales volume - 27% growth over Q2</div>
+                        </div>
+                    </li>
+                    <li><span class="icon">🚀</span>
+                        <div>
+                            <div class="title">2 New Marketplace Partnerships</div>
+                            <div class="desc">Expanded to Myntra Home & Tata CLiQ Luxury</div>
+                        </div>
+                    </li>
+                    <li><span class="icon">⚡</span>
+                        <div>
+                            <div class="title">Fulfillment Time: 7 → 4 Days</div>
+                            <div class="desc">43% improvement through regional warehouse optimization</div>
+                        </div>
+                    </li>
+                    <li><span class="icon">⭐</span>
+                        <div>
+                            <div class="title">NPS Score: 55 → 72</div>
+                            <div class="desc">Customer satisfaction at all-time high</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 8. Strategy -->
+        <section class="slide" data-label="Strategy">
+            <div class="slide-inner">
+                <div class="slide-header">
+                    <h2 class="slide-title">Q4 Strategy & Roadmap</h2><span class="slide-label">Initiatives</span>
+                </div>
+                <ul class="list">
+                    <li><span class="icon">🏪</span>
+                        <div>
+                            <div class="title">Experience Centers Launch</div>
+                            <div class="desc">Flagship stores in Bangalore & Mumbai - Jan 2026</div>
+                        </div>
+                    </li>
+                    <li><span class="icon">📱</span>
+                        <div>
+                            <div class="title">AR Try-On Feature</div>
+                            <div class="desc">Augmented reality for product visualization on app</div>
+                        </div>
+                    </li>
+                    <li><span class="icon">🏠</span>
+                        <div>
+                            <div class="title">Home Office Segment</div>
+                            <div class="desc">New product line targeting hybrid workforce</div>
+                        </div>
+                    </li>
+                    <li><span class="icon">♻️</span>
+                        <div>
+                            <div class="title">Sustainable Packaging</div>
+                            <div class="desc">100% recyclable packaging by Q4 end</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 9. Outlook -->
+        <section class="slide" data-label="Outlook">
+            <div class="slide-inner">
+                <div class="slide-header">
+                    <h2 class="slide-title">Q4 Financial Outlook</h2><span class="slide-label">Projections</span>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">₹18Cr</div>
+                        <div class="metric-label">Target Revenue</div>
+                        <div class="metric-change up">▲ 17%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">₹3.5Cr</div>
+                        <div class="metric-label">Target EBITDA</div>
+                        <div class="metric-change up">▲ 25%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">15K</div>
+                        <div class="metric-label">Target Orders</div>
+                        <div class="metric-change up">▲ 21%</div>
+                    </div>
+                </div>
+                <div class="chart-wrap" style="margin-top:1rem"><canvas id="outlookChart"></canvas></div>
+            </div>
+        </section>
+
+        <!-- 10. Thank You -->
+        <section class="slide" data-label="Close">
+            <div class="slide-inner hero">
+                <div class="hero-logo"><span class="blue">blue</span><span class="wud">wud</span></div>
+                <p class="hero-title">Thank You</p>
+                <p class="hero-period">investors@bluewud.com | www.bluewud.com</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 style="color:#4db8d9">Edit Report Data</h2><button class="modal-close"
+                    id="close-modal">&times;</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group"><label>Revenue (Cr)</label><input type="number" value="15.4"></div>
+                <div class="form-group"><label>Net Profit (Cr)</label><input type="number" value="1.9"></div>
+                <div class="form-group"><label>Gross Margin %</label><input type="number" value="42"></div>
+                <div class="form-group"><label>Orders</label><input type="number" value="12400"></div>
+                <div class="form-group"><label>EBITDA (Cr)</label><input type="number" value="2.8"></div>
+                <div class="form-group"><label>NPS Score</label><input type="number" value="72"></div>
+            </div>
+            <button class="save-btn" onclick="document.getElementById('modal').classList.remove('show')">Save
+                Changes</button>
+        </div>
+    </div>
+
+    <script>
+        // 3D Tunnel
+        const canvas = document.getElementById('tunnel');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(innerWidth, innerHeight);
+        renderer.setClearColor(0x0a1628, 1);
+        camera.position.z = 5;
+
+        // Tunnel lines
+        for (let i = 0; i < 8; i++) {
+            const pts = [];
+            const angle = (i / 8) * Math.PI * 2;
+            for (let j = 0; j <= 100; j++) {
+                const t = j / 100;
+                pts.push(new THREE.Vector3(
+                    Math.cos(angle) * 6 + Math.sin(t * Math.PI * 3) * 1.5,
+                    Math.sin(angle) * 6 + Math.cos(t * Math.PI * 2) * 1,
+                    -t * 150
+                ));
+            }
+            const geo = new THREE.BufferGeometry().setFromPoints(pts);
+            const mat = new THREE.LineBasicMaterial({ color: 0x4db8d9, transparent: true, opacity: 0.2 });
+            scene.add(new THREE.Line(geo, mat));
+        }
+
+        // Particles
+        const pGeo = new THREE.BufferGeometry();
+        const pPos = new Float32Array(300 * 3);
+        for (let i = 0; i < 300; i++) {
+            pPos[i * 3] = (Math.random() - 0.5) * 40;
+            pPos[i * 3 + 1] = (Math.random() - 0.5) * 25;
+            pPos[i * 3 + 2] = -Math.random() * 150;
+        }
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+        scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({ color: 0x4db8d9, size: 0.12, transparent: true, opacity: 0.5 })));
+
+        let scrollY = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            camera.position.z = 5 - scrollY * 100;
+            camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 1.5 - camera.position.y) * 0.05;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        let mouseX = 0, mouseY = 0;
+        addEventListener('mousemove', e => { mouseX = e.clientX / innerWidth - 0.5; mouseY = e.clientY / innerHeight - 0.5; });
+        addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+        // Slides
+        const slides = document.querySelectorAll('.slide');
+        const nav = document.getElementById('nav');
+        nav.innerHTML = slides.length ? Array.from({ length: slides.length }, (_, i) => `<div class="nav-dot" data-i="${i}"></div>`).join('') : '';
+
+        function updateNav(i) {
+            document.querySelectorAll('.nav-dot').forEach((d, j) => d.classList.toggle('active', i === j));
+            document.getElementById('page-info').textContent = `Slide ${i + 1} of ${slides.length} — ${slides[i].dataset.label || ''}`;
+        }
+
+        nav.addEventListener('click', e => {
+            if (e.target.classList.contains('nav-dot')) {
+                slides[parseInt(e.target.dataset.i)].scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            const docH = document.documentElement.scrollHeight - innerHeight;
+            scrollY = docH > 0 ? window.scrollY / docH : 0;
+            document.getElementById('progress').style.width = `${scrollY * 100}%`;
+            let cur = 0;
+            slides.forEach((s, i) => { if (window.scrollY >= s.offsetTop - innerHeight / 2) cur = i; });
+            updateNav(cur);
+        });
+        updateNav(0);
+
+        // Charts
+        const cOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff', font: { size: 10 } } } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.6)', font: { size: 9 } }, grid: { color: 'rgba(77,184,217,0.1)' } }, y: { ticks: { color: 'rgba(255,255,255,0.6)', font: { size: 9 } }, grid: { color: 'rgba(77,184,217,0.1)' } } } };
+        new Chart(document.getElementById('revChart'), { type: 'bar', data: { labels: ['Q1', 'Q2', 'Q3', 'Q4 Target'], datasets: [{ label: 'Revenue (Cr)', data: [7.4, 12.1, 15.4, 18], backgroundColor: ['#4db8d9', '#4db8d9', '#5cc8e8', '#8be0f5'] }] }, options: cOpts });
+        new Chart(document.getElementById('channelChart'), { type: 'doughnut', data: { labels: ['Amazon', 'Flipkart', 'Pepperfry', 'Urban Ladder', 'D2C', 'Others'], datasets: [{ data: [21, 18, 16, 14, 10, 21], backgroundColor: ['#4db8d9', '#5cc8e8', '#7dd3e8', '#8be0f5', '#3a9dbf', '#2d7d99'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#fff', font: { size: 9 } } } } } });
+        new Chart(document.getElementById('marginChart'), { type: 'line', data: { labels: ['Q1', 'Q2', 'Q3'], datasets: [{ label: 'Gross Margin %', data: [36, 38, 42], borderColor: '#4db8d9', tension: 0.4, fill: true, backgroundColor: 'rgba(77,184,217,0.1)' }, { label: 'EBITDA Margin %', data: [8, 16, 18.2], borderColor: '#8be0f5', tension: 0.4 }] }, options: cOpts });
+        new Chart(document.getElementById('productChart'), { type: 'pie', data: { labels: ['Study Tables', 'TV Units', 'Bookshelves', 'Chairs', 'Others'], datasets: [{ data: [37, 27, 20, 10, 6], backgroundColor: ['#4db8d9', '#5cc8e8', '#7dd3e8', '#8be0f5', '#3a9dbf'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#fff', font: { size: 9 } } } } } });
+        new Chart(document.getElementById('outlookChart'), { type: 'bar', data: { labels: ['Q1', 'Q2', 'Q3', 'Q4'], datasets: [{ label: 'Revenue (Cr)', data: [7.4, 12.1, 15.4, 18], backgroundColor: ['#4db8d9', '#4db8d9', '#5cc8e8', '#8be0f5'] }] }, options: cOpts });
+
+        // Modal
+        document.getElementById('edit-btn').onclick = () => document.getElementById('modal').classList.add('show');
+        document.getElementById('close-modal').onclick = () => document.getElementById('modal').classList.remove('show');
+        document.getElementById('export-btn').onclick = () => {
+            const d = { revenue: 15.4, profit: 1.9, margin: 42, orders: 12400, ebitda: 2.8 };
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)])); a.download = 'bluewud_q3.json'; a.click();
+        };
+    </script>
+</body>
+
+</html>
