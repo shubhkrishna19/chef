@@ -779,16 +779,26 @@
         };
 
         function updateUI() {
-            // Update individual values in the UI
+            // Update summary metrics
             document.querySelectorAll('.metric-value').forEach(el => {
-                const label = el.nextElementSibling.textContent.toLowerCase();
-                if (label === 'revenue') el.textContent = `₹${reportData.revenue}Cr`;
-                if (label === 'net profit') el.textContent = `₹${reportData.profit}Cr`;
-                if (label === 'gross margin') el.textContent = `${reportData.margin}%`;
-                if (label === 'orders') el.textContent = reportData.orders;
-                if (label === 'ebitda') el.textContent = `₹${reportData.ebitda}Cr`;
-                if (label === 'nps score') el.textContent = reportData.nps;
+                const metricLabel = el.parentElement.querySelector('.metric-label').textContent.toLowerCase();
+                if (metricLabel.includes('revenue')) el.textContent = `₹${reportData.revenue}Cr`;
+                if (metricLabel.includes('net profit')) el.textContent = `₹${reportData.profit}Cr`;
+                if (metricLabel.includes('gross margin')) el.textContent = `${reportData.margin}%`;
+                if (metricLabel.includes('orders')) el.textContent = reportData.orders;
+                if (metricLabel.includes('ebitda')) el.textContent = `₹${reportData.ebitda}Cr`;
+                if (metricLabel.includes('nps score')) el.textContent = reportData.nps;
             });
+
+            // Update specific slide detail cards (e.g. Q3 cards on detail slides)
+            document.querySelectorAll('.metric').forEach(card => {
+                const label = card.querySelector('.metric-label')?.textContent;
+                const value = card.querySelector('.metric-value');
+                if (label === 'Q3' && value) {
+                    value.textContent = `₹${reportData.revenue}Cr`;
+                }
+            });
+
             // Update charts
             renderCharts();
         }
